@@ -7,7 +7,7 @@ Delft3D is Open Source Software and facilitates the hydrodynamic (Delft3D-FLOW m
 
 Using Tmux inside an interactive session,
 
-# **Set script:** A bash file that sets the environment. It must be modified making it executable. It must be sourced. 
+**The set script:** A bash file that sets the environment. The file needs to be made executable and sourced to apply the changes. 
 ```
 #!/bin/bash
 
@@ -63,7 +63,7 @@ make install
 cd ..
 ```
 
-# netcdf-c
+**netcdf-c**
 ```
 wget https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.6.1.tar.gz -O netcdf-c-4.6.1.tar.gz
 tar -xf netcdf-c-4.6.1.tar.gz
@@ -74,7 +74,7 @@ make check
 make install
 cd ..
 ```
-# netcdf-fortran
+**netcdf-fortran**
 ```
 wget https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.5.0.tar.gz -O netcdf-fortran-4.5.0.tar.gz
 tar -xf netcdf-fortran-4.5.0.tar.gz
@@ -86,7 +86,7 @@ make install
 cd ..
 ```
 
-# Install Delft3D
+**Install Delft3D**: 
 With all the necessary dependencies installed, we can now download, compile and install Delft3D. Note that you must have a Deltares SVN server account to download the source code. If you need to register, see the “Steps needed to use the Delft3D source code” section of the Delft3D compilation guide. In the compilation instructions below, replace <username> and <password> with the SVN login details that Deltares sent you. The commands below will install tag 68819, the recommended tag for Delft3D-FM. This time the binaries are placed /home/apps/chpc/earth/Delft3D/bin directory.
 ```
 svn checkout --username <username> --password <password> https://svn.oss.deltares.nl/repos/delft3d/tags/delft3dfm/68819/ delft3dfm-68819
