@@ -7,7 +7,7 @@ Delft3D is Open Source Software and facilitates the hydrodynamic (Delft3D-FLOW m
 
 Using Tmux inside an interactive session,
 
-**The set script:** A bash file that sets the environment. The file needs to be made executable and sourced to apply the changes. 
+**The set script:** Run the bash file that sets the delft3d environment. The file needs to be made executable and sourced to apply the changes. 
 ```
 #!/bin/bash
 
