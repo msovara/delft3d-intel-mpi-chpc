@@ -87,7 +87,12 @@ make check
 make install 
 cd ..
 ```
-
+ - If the **netcdf-fortran** build fails, regenerate the build files and run ./configure again:
+```
+aclocal
+autoconf
+automake --add-missing
+```
 **Install Delft3D**: 
 With all the necessary dependencies installed, we can now download, compile and install Delft3D. Note that you must have a Deltares SVN server account to download the source code. If you need to register, see the “Steps needed to use the Delft3D source code” section of the Delft3D compilation guide. In the compilation instructions below, replace <username> and <password> with the SVN login details that Deltares sent you. The commands below will install tag 68819, the recommended tag for Delft3D-FM. This time the binaries are placed /home/apps/chpc/earth/Delft3D/bin directory.
 ```
