@@ -70,7 +70,7 @@ cd ..
 wget https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.6.1.tar.gz -O netcdf-c-4.6.1.tar.gz
 tar -xf netcdf-c-4.6.1.tar.gz
 cd netcdf-c-4.6.1
-./configure --prefix=/home/apps/chpc/earth/Delft3d/LIBRARIES/netcdf-c-4.6.1 --disable-dap-remote-tests
+./configure --prefix=/home/apps/chpc/earth/delft3d/LIBRARIES/netcdf-c-4.6.1 --disable-dap-remote-tests
 make 
 make check
 make install
