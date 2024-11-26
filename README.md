@@ -81,7 +81,7 @@ cd ..
 wget https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.5.0.tar.gz -O netcdf-fortran-4.5.0.tar.gz
 tar -xf netcdf-fortran-4.5.0.tar.gz
 cd netcdf-fortran-4.5.0
-./configure --prefix=/home/apps/chpc/earth/Delft3d/LIBRARIES/netcdf-fortran-4.5.0
+./configure --prefix=/home/apps/chpc/earth/delft3d/LIBRARIES/netcdf-fortran-4.5.0
 make 
 make check 
 make install 
