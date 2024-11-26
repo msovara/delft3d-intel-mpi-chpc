@@ -17,16 +17,15 @@ source /apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and_libra
 module load chpc/BIOMODULES
 module add curl/7.50.0
 
-export delftDIR=/home/apps/chpc/earth/delft3d
-export DIR=$delftDIR/LIBRARIES
+export DelftDIR=/home/apps/chpc/earth/delft3d
+export DIR=$DelftDIR/LIBRARIES
+
 export I_MPI_SHM="off"
 
 export CC=icc
 export CXX=icc
 export FC=ifort
-
-export FCFLAGS="-m64 -I$DIR/netcdf/include -I$DIR/grib2/include"
-
+export FCFLAGS="-m64 -I$DIR/netcdf/include -I$DIR/grib2/include -I$DIR/hdf5-1.10.6/include"
 export F77=ifort
 export FFLAGS=$FCFLAGS
 export CFLAGS=$FCFLAGS
@@ -35,18 +34,21 @@ export MPICC=/apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and
 export MPIF90=/apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and_libraries/linux/mpi/intel64/bin/mpiifort
 export MPIF77=/apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and_libraries/linux/mpi/intel64/bin/mpiifort
 
-export LDFLAGS="-L$DIR/hdf5-1.10.6/lib"
-export CPPFLAGS="-I$DIR/hdf5-1.10.6/include"
+# HDF5 Paths
+export HDF5_DIR="$DIR/hdf5-1.10.6"
+export LDFLAGS="-L$HDF5_DIR/lib -L$DIR/netcdf-c-4.6.1/lib"
+export CPPFLAGS="-I$HDF5_DIR/include -I$DIR/netcdf-c-4.6.1/include"
+export LD_LIBRARY_PATH="$HDF5_DIR/lib:$DIR/netcdf-c-4.6.1/lib:$LD_LIBRARY_PATH"
+
+# NetCDF Paths
 export NCDIR="$DIR/netcdf-c-4.6.1"
-export LD_LIBRARY_PATH=${NCDIR}/lib:${LD_LIBRARY_PATH}
-export CPPFLAGS="-I${NCDIR}/include"
-export LDFLAGS="-L${NCDIR}/lib"
-export NETCDF_CFLAGS="-I${DIR}/netcdf-c-4.6.1/include -I${DIR}/netcdf-c-4.6.1/include"
-export NETCDF_LIBS="-L${DIR}/netcdf-c-4.6.1/lib -lnetcdf"
+export NETCDF_CFLAGS="-I$NCDIR/include -I$DIR/netcdf-c-4.6.1/include"
+export NETCDF_LIBS="-L$NCDIR/lib -lnetcdf"
 
 CFLAGS='-O2 ' CXXFLAGS='-O2 ' AM_FFLAGS='-lifcoremt ' FFLAGS='-O1 ' AM_FCFLAGS='-lifcoremt ' FCFLAGS='-O1 ' AM_LDFLAGS='-lifcoremt '
 
 ulimit -s unlimited
+
 ```
 
 # LIBRARIES
