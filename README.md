@@ -15,8 +15,7 @@ module purge
 module load chpc/parallel_studio_xe/18.0.2/2018.2.046
 source /apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and_libraries/linux/mpi/bin64/mpivars.sh
 module load chpc/BIOMODULES
-module add curl/7.50.0
-module add 
+module add curl/7.50.0 
 
 export DelftDIR=/home/apps/chpc/earth/delft3d
 export DIR=$DelftDIR/LIBRARIES
