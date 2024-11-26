@@ -56,7 +56,7 @@ ulimit -s unlimited
 wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.6/src/hdf5-1.10.6.tar.bz2
 tar -xf hdf5-1.10.6.tar.bz2
 cd hdf5-1.10.6
-./configure --prefix=/home/apps/chpc/earth/Delft3d/LIBRARIES/hdf5-1.10.6 --enable-shared
+./configure --prefix=/home/apps/chpc/earth/delft3d/LIBRARIES/hdf5-1.10.6 --enable-shared
 make
 make check
 make install
