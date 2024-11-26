@@ -17,8 +17,8 @@ source /apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and_libra
 module load chpc/BIOMODULES
 module add curl/7.50.0
 
-export DelftDIR=/home/apps/chpc/earth/Delft3d
-export DIR=$DelftDIR/LIBRARIES
+export delftDIR=/home/apps/chpc/earth/delft3d
+export DIR=$delftDIR/LIBRARIES
 export I_MPI_SHM="off"
 
 export CC=icc
