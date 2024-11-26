@@ -101,7 +101,7 @@ cp delft3dfm-68819/src/third_party_open/swan/src/*.[fF]* delft3dfm-68819/src/thi
 cp delft3dfm-68819/src/third_party_open/swan/src/*.[fF]* delft3dfm-68819/src/third_party_open/swan/swan_omp
 cd delft3dfm-68819/src
 ./autogen.sh --verbose 
-./configure --prefix=/home/apps/chpc/earth/Delft3d/delft3d
+./configure --prefix=/home/apps/chpc/earth/delft3d/delft3d
 make ds-install 
 make ds-install -C engines_gpl/dflowfm 
 cd ..
