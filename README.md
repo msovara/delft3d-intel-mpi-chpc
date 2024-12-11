@@ -23,7 +23,7 @@ export DIR=$DelftDIR/LIBRARIES
 
 export I_MPI_SHM="off"
 
-export CC=icc
+export CC=/apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and_libraries_2018.2.199/linux/mpi/intel64/bin/mpicc
 export CXX=icc
 export FC=ifort
 export FCFLAGS="-m64 -I$DIR/netcdf/include -I$DIR/grib2/include -I$DIR/hdf5-1.10.6/include"
@@ -59,7 +59,7 @@ ulimit -s unlimited
 wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.6/src/hdf5-1.10.6.tar.bz2
 tar -xf hdf5-1.10.6.tar.bz2
 cd hdf5-1.10.6
-./configure --prefix=/home/apps/chpc/earth/delft3d/LIBRARIES/hdf5-1.10.6 --enable-shared
+./configure --prefix=/home/apps/chpc/earth/delft3d/LIBRARIES/hdf5-1.10.6 --enable-parallel --enable-shared
 make
 make check
 make install
