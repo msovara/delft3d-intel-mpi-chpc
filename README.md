@@ -206,11 +206,121 @@ make install
 # Verify installation
 ${NCFDIR}/bin/nf-config --all
 ```
+
+# Delft3D-FM Installation Guide
+
+## Prerequisites
+
+- SVN account from Deltares
+- Completed installation of HDF5, NetCDF-C, and NetCDF-Fortran
+- Sourced environment from `delft3d_env.sh`
 ```
-aclocal
-autoconf
-automake --add-missing
+set -e  # Exit on error
+
+#---------------
+# Configuration
+#---------------
+DELFT3D_VERSION="68819"
+INSTALL_PREFIX="/home/apps/chpc/earth/delft3d/delft3d"
+SVN_URL="https://svn.oss.deltares.nl/repos/delft3d/tags/delft3dfm/${DELFT3D_VERSION}/"
+SOURCE_DIR="delft3dfm-${DELFT3D_VERSION}"
+
+#---------------
+# Helper Functions
+#---------------
+check_prerequisites() {
+    # Check if SVN is installed
+    if ! command -v svn &> /dev/null; then
+        echo "Error: SVN is not installed"
+        exit 1
+    }
+    
+    # Check if environment is properly set
+    if [ -z "$DelftDIR" ]; then
+        echo "Error: DelftDIR environment variable not set. Did you source delft3d_env.sh?"
+        exit 1
+    }
+}
+
+#---------------
+# Main Installation
+#---------------
+main() {
+    print_section "Checking Prerequisites"
+    check_prerequisites
+
+    print_section "Downloading Delft3D Source Code"
+    # Prompt for credentials if not provided
+    read -p "Enter SVN username: " SVN_USER
+    read -s -p "Enter SVN password: " SVN_PASS
+    echo
+
+    # Checkout source code
+    svn checkout \
+        --username "${SVN_USER}" \
+        --password "${SVN_PASS}" \
+        "${SVN_URL}" \
+        "${SOURCE_DIR}"
+
+    print_section "Copying SWAN Files"
+    # Copy SWAN source files
+    cp ${SOURCE_DIR}/src/third_party_open/swan/src/*.[fF]* \
+       ${SOURCE_DIR}/src/third_party_open/swan/swan_mpi
+    cp ${SOURCE_DIR}/src/third_party_open/swan/src/*.[fF]* \
+       ${SOURCE_DIR}/src/third_party_open/swan/swan_omp
+
+    print_section "Configuring Build"
+    cd ${SOURCE_DIR}/src
+
+    # Generate build system files
+    echo "Running autogen..."
+    ./autogen.sh --verbose
+
+    # Configure build
+    echo "Running configure..."
+    ./configure --prefix="${INSTALL_PREFIX}" \
+               --with-mpi \
+               --with-netcdf \
+               --with-hdf5
+
+    print_section "Building Delft3D"
+    # Main compilation
+    echo "Building main components..."
+    make ds-install
+
+    echo "Building D-Flow FM..."
+    make ds-install -C engines_gpl/dflowfm
+
+    print_section "Verifying Installation"
+    # Check if critical binaries exist
+    for binary in d_hydro dflowfm flow2d3d; do
+        if [ -f "${INSTALL_PREFIX}/bin/${binary}" ]; then
+            echo "✓ ${binary} installed successfully"
+        else
+            echo "✗ ${binary} installation failed"
+            exit 1
+        fi
+    done
+
+    print_section "Installation Complete"
+    echo "Delft3D has been installed to: ${INSTALL_PREFIX}"
+    echo "Add the following to your PATH:"
+    echo "export PATH=${INSTALL_PREFIX}/bin:\$PATH"
+}
+
+#---------------
+# Utility Functions
+#---------------
+print_section() {
+    echo -e "\n=== $1 ==="
+}
+
+#---------------
+# Script Execution
+#---------------
+main "$@"
 ```
+  
 **Install Delft3D**: 
 With all the necessary dependencies installed, we can now download, compile and install Delft3D. Note that you must have a Deltares SVN server account to download the source code. If you need to register, see the “Steps needed to use the Delft3D source code” section of the Delft3D compilation guide. In the compilation instructions below, replace <username> and <password> with the SVN login details that Deltares sent you. The commands below will install tag 68819, the recommended tag for Delft3D-FM. This time the binaries are placed /home/apps/chpc/earth/Delft3D/bin directory.
 ```
