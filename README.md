@@ -11,11 +11,59 @@ Using Tmux inside an interactive session,
 ```
 #!/bin/bash
 
+# Clean existing module environment
 module purge
+
+# Load OneAPI environment
 source /home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh
+
+# Load MPICH
 module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
-export D3D_MPICC=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpicc
+
+# Set directory variables
+export DelftDIR=/home/apps/chpc/earth/delft3d_mpich_oneapi
+export DIR=${DelftDIR}/LIBRARIES
+export NCDIR=${DIR}/netcdf-c-4.6.1
+export HDF5_DIR=${DIR}/hdf5-1.10.6
+
+# MPI settings
 export I_MPI_SHM="off"
+
+# Compiler settings
+export CC=icc
+export CXX=icc
+export FC=ifort
+export F77=ifort
+
+# MPICH compiler paths
+export MPICC=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpicc
+export MPIF90=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpif90
+export MPIF77=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpif77
+
+# NetCDF and HDF5 paths
+export LD_LIBRARY_PATH=${NCDIR}/lib:${HDF5_DIR}/lib:${LD_LIBRARY_PATH}
+export CPPFLAGS="-I${NCDIR}/include -I${HDF5_DIR}/include"
+export LDFLAGS="-L${NCDIR}/lib -L${HDF5_DIR}/lib"
+export NETCDF_CFLAGS="-I${NCDIR}/include"
+export NETCDF_LIBS="-L${NCDIR}/lib -lnetcdf"
+
+# Compilation flags
+export FCFLAGS="-O2 -I${NCDIR}/include -I${HDF5_DIR}/include"
+export FFLAGS=${FCFLAGS}
+export CFLAGS=${FCFLAGS}
+export CXXFLAGS="-O2"
+export AM_FFLAGS='-lifcoremt'
+export AM_LDFLAGS='-lifcoremt'
+
+# Set unlimited stack size
+ulimit -s unlimited
+
+# Debugging and verification output
+echo "Loaded Modules:"
+module list
+echo "Environment variables:"
+env | grep -E "DelftDIR|DIR|NCDIR|HDF5_DIR|LD_LIBRARY_PATH|MPICC|MPIF"
+
 ```
 
 ## Compile HDF5
@@ -25,7 +73,7 @@ wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.6/src/hd
 tar -xf hdf5-1.10.6.tar.bz2
 
 # Build and compile hdf5 with the appropriate flags and compiler choices
-./configure CC="${D3D_MPICC}" --enable-parallel --enable-shared --prefix="/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/hdf5-1.10.6"
+./configure --enable-parallel --enable-shared --prefix="/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/hdf5-1.10.6"
 make
 make install
 cd ..
@@ -46,7 +94,7 @@ make install
 wget https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.6.1.tar.gz -O netcdf-c-4.6.1.tar.gz
 tar -xf netcdf-c-4.6.1.tar.gz
 
-
+./configure CC="${D3D_MPICC}" --disable-dap-remote-tests --with-hdf5=/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/hdf5-1.10.6
 ```
 export DelftDIR=/home/apps/chpc/earth/delft3d
 export DIR=$DelftDIR/LIBRARIES
