@@ -106,6 +106,19 @@ tar -xf netcdf-c-4.6.1.tar.gz
     --prefix=/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/netcdf-c-4.6.1 \   
 ```
 
+## Compile netcdf-fortran
+```
+wget https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.5.0.tar.gz -O netcdf-fortran-4.5.0.tar.gz
+tar -xf netcdf-fortran-4.5.0.tar.gz
+cd netcdf-fortran-4.5.0
+
+./configure 
+# make 2>&1 | tee m.txt
+# make check 2>&1 | tee mc.txt
+# make install 2>&1 | tee mi.txt
+
+```
+
 
 export DelftDIR=/home/apps/chpc/earth/delft3d
 export DIR=$DelftDIR/LIBRARIES
