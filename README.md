@@ -94,8 +94,15 @@ make install
 wget https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.6.1.tar.gz -O netcdf-c-4.6.1.tar.gz
 tar -xf netcdf-c-4.6.1.tar.gz
 
-./configure CC="${D3D_MPICC}" --disable-dap-remote-tests --with-hdf5=/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/hdf5-1.10.6
+# Configure NetCDF with HDF5 and MPICH
+
+./configure CC="${D3D_MPICC}" \
+    --disable-dap-remote-tests \
+    --with-hdf5=${HDF5_DIR} \ # Ensures the path points to /home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/hdf5-1.10.6.
+    --prefix=/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/netcdf-c-4.6.1
 ```
+
+
 export DelftDIR=/home/apps/chpc/earth/delft3d
 export DIR=$DelftDIR/LIBRARIES
 
