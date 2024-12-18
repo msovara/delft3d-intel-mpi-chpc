@@ -3,9 +3,15 @@
 
 Delft3D is Open Source Software and facilitates the hydrodynamic (Delft3D-FLOW module), morphodynamic (Delft3D-MOR module), waves (Delft3D-WAVE module), water quality (Delft3D-WAQ module including the DELWAQ kernel) and particle (Delft3D-PART module) modelling. The source code can be downloaded here: https://oss.deltares.nl/web/delft3d. This repo is based on the installation tutorial here: https://gist.github.com/H0R5E/c4af6db788b227de702a12e01b64cf46 and https://www.youtube.com/watch?v=o1iQvO3x8A0. 
 
-2018 Intel MPI compilation on CentOS-7
+2018 Intel OneAPI compilation on CentOS-7 using Tmux inside an interactive session.
 
-Using Tmux inside an interactive session,
+# Delft3D Compilation Guide
+
+## Prerequisites
+- Intel OneAPI Compiler Suite
+- MPICH 4.2.2
+- Access to CHPC modules
+- Sufficient disk space (~2GB)
 
 ## Set compile and runtime environment variables for Delf3D in a script to be sourced during compilation and execution
 **The set script:** Run the bash file that sets the delft3d environment. The file needs to be made executable and sourced to apply the changes. 
