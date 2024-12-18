@@ -67,6 +67,9 @@ echo "Loaded Modules:"
 module list
 echo "Environment variables:"
 env | grep -E "DelftDIR|DIR|NCDIR|HDF5_DIR|LD_LIBRARY_PATH|MPICC|MPIF"
+
+# Debugging aid
+echo "Environment setup completed successfully."
 ```
 
 ## Compile HDF5
