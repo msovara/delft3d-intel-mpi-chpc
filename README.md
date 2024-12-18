@@ -31,6 +31,7 @@ export UCX_LOG_LEVEL=error
 # Rebuild HDF5
 make clean
 make -j4
+make install
 ```
 
 export DelftDIR=/home/apps/chpc/earth/delft3d
