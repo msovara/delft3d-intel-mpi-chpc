@@ -12,11 +12,8 @@ Using Tmux inside an interactive session,
 #!/bin/bash
 
 module purge
-module load chpc/parallel_studio_xe/18.0.2/2018.2.046
-source /apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and_libraries/linux/mpi/bin64/mpivars.sh
-module load chpc/BIOMODULES
-module add curl/7.50.0
-module add chpc/mpich/3.4.3/gcc-9.2.0
+source /home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh
+module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
 
 export DelftDIR=/home/apps/chpc/earth/delft3d
 export DIR=$DelftDIR/LIBRARIES
