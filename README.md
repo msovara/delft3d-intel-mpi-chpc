@@ -111,42 +111,65 @@ env | grep -E "DelftDIR|DIR|NCDIR|HDF5_DIR|LD_LIBRARY_PATH|MPICC|MPIF" | sort
 echo -e "\nEnvironment setup completed successfully."
 ```
 
-## Compile HDF5
+## Build HDF5
 ```
-# In the dtn node get the download the source code and decompress the file 
+#!/bin/bash
+set -e  # Exit on error
+
+echo "=== Building HDF5 ==="
+
+# Download and extract
 wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.6/src/hdf5-1.10.6.tar.bz2
 tar -xf hdf5-1.10.6.tar.bz2
+cd hdf5-1.10.6
 
-# Build and compile hdf5 with the appropriate flags and compiler choices
-./configure --enable-parallel --enable-shared --prefix="/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/hdf5-1.10.6"
-make
-make install
-cd ..
-```
-
-When running into ```Make``` errors, something to do with ```H5lib_settings.c```, generated during the HDF5 build process, it contains invalid syntax and conflicting information due to a problem in the environment or build configuration. The fix below seems to clear it:
-```
+# Fix for MXM/UCX logging
 export MXM_LOG_LEVEL=error
 export UCX_LOG_LEVEL=error
 
-# Rebuild HDF5
-make clean
-make -j4   # assign 4 processors to the task
+# Configure and build
+./configure \
+    --enable-parallel \
+    --enable-shared \
+    --enable-static \
+    --with-pic \
+    --prefix="${HDF5_DIR}"
+make -j4
 make install
+
+# Verify installation
+${HDF5_DIR}/bin/h5pcc -showconfig
 ```
 
-## Compile netcdf-c
+## Building netcdf-c
 ```
-# In the dtn node get the download the source code and decompress the file 
+#!/bin/bash
+set -e
+
+echo "=== Building NetCDF-C ==="
+
+# Download and extract
 wget https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.6.1.tar.gz -O netcdf-c-4.6.1.tar.gz
 tar -xf netcdf-c-4.6.1.tar.gz
+cd netcdf-c-4.6.1
 
-# Configure NetCDF with HDF5 and MPICH
-
-./configure CC="${D3D_MPICC}" \
+# Configure and build
+./configure \
+    CC="${CC}" \
+    CFLAGS="-O2 -fPIC" \
     --disable-dap-remote-tests \
-    --with-hdf5=/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/hdf5-1.10.6 \
-    --prefix=/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/netcdf-c-4.6.1 \   
+    --enable-shared \
+    --enable-static \
+    --with-pic \
+    --with-hdf5="${HDF5_DIR}" \
+    --prefix="${NCDIR}"
+
+make clean
+make -j4
+make install
+
+# Verify installation
+${NCDIR}/bin/nc-config --all  
 ```
 
 ## Compile netcdf-fortran
