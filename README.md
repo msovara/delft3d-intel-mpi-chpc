@@ -15,7 +15,9 @@ module purge
 source /home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh
 module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
 export D3D_MPICC=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpicc
+export I_MPI_SHM="off"
 ```
+
 ## Compile HDF5
 ```
 # In the dtn node get the download the source code and decompress the file 
