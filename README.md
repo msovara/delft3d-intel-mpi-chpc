@@ -14,10 +14,15 @@ Using Tmux inside an interactive session,
 module purge
 source /home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh
 module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
+export D3D_MPICC=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpicc
 ```
 ## Compile HDF5
 ```
-export D3D_MPICC=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpicc
+# In the dtn node get the download the source code and decompress the file 
+wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.6/src/hdf5-1.10.6.tar.bz2
+tar -xf hdf5-1.10.6.tar.bz2
+
+# Build and compile hdf5 with the appropriate flags and compiler choices
 ./configure CC="${D3D_MPICC}" --enable-parallel --enable-shared --prefix="/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/hdf5-1.10.6"
 make
 make install
