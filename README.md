@@ -12,12 +12,42 @@ Using Tmux inside an interactive session,
 #!/bin/bash
 
 module purge
-module load chpc/parallel_studio_xe/18.0.2/2018.2.046
-source /apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and_libraries/linux/mpi/bin64/mpivars.sh
-module load chpc/BIOMODULES
-module add curl/7.50.0
-module add chpc/mpich/3.4.3/gcc-9.2.0
+source /home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh
+module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
+export D3D_MPICC=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpicc
+export I_MPI_SHM="off"
+```
 
+## Compile HDF5
+```
+# In the dtn node get the download the source code and decompress the file 
+wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.6/src/hdf5-1.10.6.tar.bz2
+tar -xf hdf5-1.10.6.tar.bz2
+
+# Build and compile hdf5 with the appropriate flags and compiler choices
+./configure CC="${D3D_MPICC}" --enable-parallel --enable-shared --prefix="/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/hdf5-1.10.6"
+make
+make install
+cd ..
+```
+When running into ```Make``` errors, something to do with ```H5lib_settings.c```, generated during the HDF5 build process, it contains invalid syntax and conflicting information due to a problem in the environment or build configuration. The fix below seems to clear it:
+```
+export MXM_LOG_LEVEL=error
+export UCX_LOG_LEVEL=error
+
+# Rebuild HDF5
+make clean
+make -j4   # assign 4 processors to the task
+make install
+```
+## Compile netcdf-c
+```
+# In the dtn node get the download the source code and decompress the file 
+wget https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.6.1.tar.gz -O netcdf-c-4.6.1.tar.gz
+tar -xf netcdf-c-4.6.1.tar.gz
+
+
+```
 export DelftDIR=/home/apps/chpc/earth/delft3d
 export DIR=$DelftDIR/LIBRARIES
 
