@@ -20,6 +20,7 @@ source /home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh
 # Load MPICH
 module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
 
+
 # Set directory variables
 export DelftDIR=/home/apps/chpc/earth/delft3d_mpich_oneapi
 export DIR=${DelftDIR}/LIBRARIES
@@ -63,7 +64,6 @@ echo "Loaded Modules:"
 module list
 echo "Environment variables:"
 env | grep -E "DelftDIR|DIR|NCDIR|HDF5_DIR|LD_LIBRARY_PATH|MPICC|MPIF"
-
 ```
 
 ## Compile HDF5
@@ -78,6 +78,7 @@ make
 make install
 cd ..
 ```
+
 When running into ```Make``` errors, something to do with ```H5lib_settings.c```, generated during the HDF5 build process, it contains invalid syntax and conflicting information due to a problem in the environment or build configuration. The fix below seems to clear it:
 ```
 export MXM_LOG_LEVEL=error
@@ -88,6 +89,7 @@ make clean
 make -j4   # assign 4 processors to the task
 make install
 ```
+
 ## Compile netcdf-c
 ```
 # In the dtn node get the download the source code and decompress the file 
@@ -98,8 +100,8 @@ tar -xf netcdf-c-4.6.1.tar.gz
 
 ./configure CC="${D3D_MPICC}" \
     --disable-dap-remote-tests \
-    --with-hdf5=${HDF5_DIR} \ # Ensures the path points to /home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/hdf5-1.10.6.
-    --prefix=/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/netcdf-c-4.6.1
+    --with-hdf5=/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/hdf5-1.10.6 \
+    --prefix=/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/netcdf-c-4.6.1 \   
 ```
 
 
