@@ -27,16 +27,17 @@ module add curl/7.50.0
 export DelftDIR=/home/apps/chpc/earth/delft3d_mpich_oneapi
 export DIR=${DelftDIR}/LIBRARIES
 export NCDIR=${DIR}/netcdf-c-4.6.1
+export NCFDIR=${DIR}/netcdf-fortran-4.5.0
 export HDF5_DIR=${DIR}/hdf5-1.10.6
 
 # MPI settings
-export I_MPI_SHM="off"
+export I_MPI_ROOT=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023
 
 # Compiler settings
-export CC=icc
-export CXX=icc
-export FC=ifort
-export F77=ifort
+export CC=mpicc
+export CXX=mpicc
+export FC=mpif90
+export F77=mpif77
 
 # MPICH compiler paths
 export MPICC=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpicc
@@ -112,11 +113,18 @@ wget https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.5.0.tar.gz -
 tar -xf netcdf-fortran-4.5.0.tar.gz
 cd netcdf-fortran-4.5.0
 
-./configure 
-# make 2>&1 | tee m.txt
-# make check 2>&1 | tee mc.txt
-# make install 2>&1 | tee mi.txt
-
+./configure \
+    --prefix=${NCFDIR} \
+    --enable-shared \
+    CC=${CC} \
+    FC=${FC} \
+    F77=${F77} \
+    CPPFLAGS="-I${NCDIR}/include -I${HDF5_DIR}/include" \
+    LDFLAGS="-L${NCDIR}/lib -L${HDF5_DIR}/lib" \
+    LIBS="-lnetcdf -lhdf5_hl -lhdf5 -lz"
+make clean
+make -j4
+make install
 ```
 
 
