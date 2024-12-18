@@ -170,7 +170,6 @@ ${NCDIR}/bin/nc-config --all
 
 ## Building netcdf-fortran
 ```
-#!/bin/bash
 set -e
 
 echo "=== Building NetCDF-Fortran ==="
