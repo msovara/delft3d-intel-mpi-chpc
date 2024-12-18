@@ -17,9 +17,10 @@ module purge
 # Load OneAPI environment
 source /home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh
 
-# Load MPICH
+# Load MPICH, BIOMODULES, and curl
 module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
-
+module load chpc/BIOMODULES
+module add curl/7.50.0
 
 # Set directory variables
 export DelftDIR=/home/apps/chpc/earth/delft3d_mpich_oneapi
