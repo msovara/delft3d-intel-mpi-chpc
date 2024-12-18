@@ -14,6 +14,12 @@ Using Tmux inside an interactive session,
 module purge
 source /home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh
 module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
+```
+## Compile HDF5
+```
+export D3D_MPICC=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpicc
+./configure CC="${D3D_MPICC}" --enable-parallel --enable-shared
+```
 
 export DelftDIR=/home/apps/chpc/earth/delft3d
 export DIR=$DelftDIR/LIBRARIES
