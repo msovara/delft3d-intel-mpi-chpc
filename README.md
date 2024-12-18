@@ -19,6 +19,18 @@ module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
 ```
 export D3D_MPICC=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpicc
 ./configure CC="${D3D_MPICC}" --enable-parallel --enable-shared
+make
+make install
+cd ..
+```
+When running into ```Make``` errors, something to do with ```H5lib_settings.c```, generated during the HDF5 build process, it contains invalid syntax and conflicting information due to a problem in the environment or build configuration. The fix below seems to clear it:
+```
+export MXM_LOG_LEVEL=error
+export UCX_LOG_LEVEL=error
+
+# Rebuild HDF5
+make clean
+make -j4
 ```
 
 export DelftDIR=/home/apps/chpc/earth/delft3d
