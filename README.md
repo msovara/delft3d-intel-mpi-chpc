@@ -12,64 +12,103 @@ Using Tmux inside an interactive session,
 ```
 #!/bin/bash
 
-# Clean existing module environment
+#===============================
+# Delft3D Environment Setup
+#===============================
+
+# Function to check if directory exists
+check_dir() {
+    if [ ! -d "$1" ]; then
+        echo "Error: Directory $1 does not exist!"
+        return 1
+    fi
+}
+
+# Function to validate compiler availability
+check_compiler() {
+    if ! command -v "$1" &> /dev/null; then
+        echo "Error: Compiler $1 not found!"
+        return 1
+    fi
+}
+
+#---------------
+# Module Setup
+#---------------
+echo "Setting up modules..."
 module purge
 
-# Load OneAPI environment
-source /home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh
-
-# Load MPICH, BIOMODULES, and curl
+# Load required modules
+source /home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh || exit 1
 module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
 module load chpc/BIOMODULES
 module add curl/7.50.0
 
-# Set directory variables
+#---------------
+# Directory Setup
+#---------------
 export DelftDIR=/home/apps/chpc/earth/delft3d_mpich_oneapi
 export DIR=${DelftDIR}/LIBRARIES
 export NCDIR=${DIR}/netcdf-c-4.6.1
 export NCFDIR=${DIR}/netcdf-fortran-4.5.0
 export HDF5_DIR=${DIR}/hdf5-1.10.6
 
-# MPI settings
-export I_MPI_ROOT=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023
+# Validate directories
+for d in "${DelftDIR}" "${DIR}" "${HDF5_DIR}"; do
+    check_dir "$d" || exit 1
+done
 
-# Compiler settings
+#---------------
+# Compiler Setup
+#---------------
+export I_MPI_ROOT=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023
 export CC=mpicc
 export CXX=mpicc
 export FC=mpif90
 export F77=mpif77
 
-# MPICH compiler paths
-export MPICC=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpicc
-export MPIF90=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpif90
-export MPIF77=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpif77
+# Validate compilers
+for compiler in mpicc mpif90 mpif77; do
+    check_compiler "$compiler" || exit 1
+done
 
-# NetCDF and HDF5 paths
-export LD_LIBRARY_PATH=${NCDIR}/lib:${HDF5_DIR}/lib:${LD_LIBRARY_PATH}
+#---------------
+# Library Paths
+#---------------
+# Intel compiler libraries for libstdc++ compatibility
+export LD_LIBRARY_PATH="\
+/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin:\
+${NCDIR}/lib:\
+${HDF5_DIR}/lib:\
+${LD_LIBRARY_PATH}"
+
+#---------------
+# Compiler Flags
+#---------------
 export CPPFLAGS="-I${NCDIR}/include -I${HDF5_DIR}/include"
 export LDFLAGS="-L${NCDIR}/lib -L${HDF5_DIR}/lib"
 export NETCDF_CFLAGS="-I${NCDIR}/include"
 export NETCDF_LIBS="-L${NCDIR}/lib -lnetcdf"
-
-# Compilation flags
-export FCFLAGS="-O2 -I${NCDIR}/include -I${HDF5_DIR}/include"
+export FCFLAGS="-O2 -fPIC -I${NCDIR}/include -I${HDF5_DIR}/include"
 export FFLAGS=${FCFLAGS}
 export CFLAGS=${FCFLAGS}
-export CXXFLAGS="-O2"
+export CXXFLAGS="-O2 -fPIC"
 export AM_FFLAGS='-lifcoremt'
 export AM_LDFLAGS='-lifcoremt'
 
 # Set unlimited stack size
 ulimit -s unlimited
 
-# Debugging and verification output
-echo "Loaded Modules:"
+#---------------
+# Verification
+#---------------
+echo "=== Environment Setup Summary ==="
+echo "1. Loaded Modules:"
 module list
-echo "Environment variables:"
-env | grep -E "DelftDIR|DIR|NCDIR|HDF5_DIR|LD_LIBRARY_PATH|MPICC|MPIF"
+echo -e "\n2. Critical Environment Variables:"
+env | grep -E "DelftDIR|DIR|NCDIR|HDF5_DIR|LD_LIBRARY_PATH|MPICC|MPIF" | sort
 
-# Debugging aid
-echo "Environment setup completed successfully."
+echo -e "\nEnvironment setup completed successfully."
 ```
 
 ## Compile HDF5
