@@ -18,7 +18,7 @@ module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
 ## Compile HDF5
 ```
 export D3D_MPICC=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023/bin/mpicc
-./configure CC="${D3D_MPICC}" --enable-parallel --enable-shared --prefix="/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES"
+./configure CC="${D3D_MPICC}" --enable-parallel --enable-shared --prefix="/home/apps/chpc/earth/delft3d_mpich_oneapi/LIBRARIES/hdf5-1.10.6"
 make
 make install
 cd ..
