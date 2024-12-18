@@ -113,7 +113,6 @@ echo -e "\nEnvironment setup completed successfully."
 
 ## Build HDF5
 ```
-#!/bin/bash
 set -e  # Exit on error
 
 echo "=== Building HDF5 ==="
@@ -143,7 +142,6 @@ ${HDF5_DIR}/bin/h5pcc -showconfig
 
 ## Building netcdf-c
 ```
-#!/bin/bash
 set -e
 
 echo "=== Building NetCDF-C ==="
@@ -163,8 +161,6 @@ cd netcdf-c-4.6.1
     --with-pic \
     --with-hdf5="${HDF5_DIR}" \
     --prefix="${NCDIR}"
-
-make clean
 make -j4
 make install
 
