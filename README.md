@@ -168,98 +168,36 @@ make install
 ${NCDIR}/bin/nc-config --all  
 ```
 
-## Compile netcdf-fortran
+## Building netcdf-fortran
 ```
+#!/bin/bash
+set -e
+
+echo "=== Building NetCDF-Fortran ==="
+
+# Download and extract
 wget https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.5.0.tar.gz -O netcdf-fortran-4.5.0.tar.gz
 tar -xf netcdf-fortran-4.5.0.tar.gz
 cd netcdf-fortran-4.5.0
 
+# Configure and build
 ./configure \
-    --prefix=${NCFDIR} \
+    --prefix="${NCFDIR}" \
     --enable-shared \
-    CC=${CC} \
-    FC=${FC} \
-    F77=${F77} \
+    --enable-static \
+    --with-pic \
+    CC="${CC}" \
+    FC="${FC}" \
+    F77="${F77}" \
     CPPFLAGS="-I${NCDIR}/include -I${HDF5_DIR}/include" \
     LDFLAGS="-L${NCDIR}/lib -L${HDF5_DIR}/lib" \
     LIBS="-lnetcdf -lhdf5_hl -lhdf5 -lz"
-make clean
 make -j4
 make install
+
+# Verify installation
+${NCFDIR}/bin/nf-config --all
 ```
-
-
-export DelftDIR=/home/apps/chpc/earth/delft3d
-export DIR=$DelftDIR/LIBRARIES
-
-export I_MPI_SHM="off"
-
-export CC=/apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and_libraries_2018.2.199/linux/mpi/intel64/bin/mpicc
-export CXX=icc
-export FC=ifort
-export FCFLAGS="-m64 -I$DIR/netcdf/include -I$DIR/grib2/include -I$DIR/hdf5-1.10.6/include"
-export F77=ifort
-export FFLAGS=$FCFLAGS
-export CFLAGS=$FCFLAGS
-
-export MPICC=/apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and_libraries/linux/mpi/intel64/bin/mpiicc
-export MPIF90=/apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and_libraries/linux/mpi/intel64/bin/mpiifort
-export MPIF77=/apps/compilers/intel/parallel_studio_xe_2018_update2/compilers_and_libraries/linux/mpi/intel64/bin/mpiifort
-
-# HDF5 Paths
-export HDF5_DIR="$DIR/hdf5-1.10.6"
-export LDFLAGS="-L$HDF5_DIR/lib -L$DIR/netcdf-c-4.6.1/lib"
-export CPPFLAGS="-I$HDF5_DIR/include -I$DIR/netcdf-c-4.6.1/include"
-export LD_LIBRARY_PATH="$HDF5_DIR/lib:$DIR/netcdf-c-4.6.1/lib:$LD_LIBRARY_PATH"
-
-# NetCDF Paths
-export NCDIR="$DIR/netcdf-c-4.6.1"
-export NETCDF_CFLAGS="-I$NCDIR/include -I$DIR/netcdf-c-4.6.1/include"
-export NETCDF_LIBS="-L$NCDIR/lib -lnetcdf"
-
-CFLAGS='-O2 ' CXXFLAGS='-O2 ' AM_FFLAGS='-lifcoremt ' FFLAGS='-O1 ' AM_FCFLAGS='-lifcoremt ' FCFLAGS='-O1 ' AM_LDFLAGS='-lifcoremt '
-
-ulimit -s unlimited
-
-```
-
-# LIBRARIES
-
-**hdf5**
-```
-wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.10/hdf5-1.10.6/src/hdf5-1.10.6.tar.bz2
-tar -xf hdf5-1.10.6.tar.bz2
-cd hdf5-1.10.6
-./configure --prefix=/home/apps/chpc/earth/delft3d/LIBRARIES/hdf5-1.10.6 --enable-parallel --enable-shared
-make
-make check
-make install
-cd ..
-```
-
-**netcdf-c**
-```
-wget https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.6.1.tar.gz -O netcdf-c-4.6.1.tar.gz
-tar -xf netcdf-c-4.6.1.tar.gz
-cd netcdf-c-4.6.1
-./configure --prefix=/home/apps/chpc/earth/delft3d/LIBRARIES/netcdf-c-4.6.1 --disable-dap-remote-tests
-make 
-make check
-make install
-cd ..
-```
-**netcdf-fortran**
-```
-wget https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v4.5.0.tar.gz -O netcdf-fortran-4.5.0.tar.gz
-tar -xf netcdf-fortran-4.5.0.tar.gz
-cd netcdf-fortran-4.5.0
-./configure --prefix=/home/apps/chpc/earth/delft3d/LIBRARIES/netcdf-fortran-4.5.0
-make 
-make check 
-make install 
-cd ..
-```
- - If the **netcdf-fortran** build fails, regenerate the build files and run ./configure again:
 ```
 aclocal
 autoconf
