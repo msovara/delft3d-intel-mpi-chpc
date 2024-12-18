@@ -120,7 +120,7 @@ env | grep -E "DelftDIR|DIR|NCDIR|HDF5_DIR|LD_LIBRARY_PATH|MPICC|MPIF" | sort
 echo -e "\nEnvironment setup completed successfully."
 ```
 
-## Build HDF5
+## 2. Build HDF5
 ```
 set -e  # Exit on error
 
@@ -149,7 +149,7 @@ make install
 ${HDF5_DIR}/bin/h5pcc -showconfig
 ```
 
-## Building netcdf-c
+## 3. Building netcdf-c
 ```
 set -e
 
@@ -177,7 +177,7 @@ make install
 ${NCDIR}/bin/nc-config --all  
 ```
 
-## Building netcdf-fortran
+## 4. Building netcdf-fortran
 ```
 set -e
 
