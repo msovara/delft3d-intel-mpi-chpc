@@ -30,7 +30,7 @@ export UCX_LOG_LEVEL=error
 
 # Rebuild HDF5
 make clean
-make -j4
+make -j4   # assign 4 processors to the task
 make install
 ```
 
