@@ -40,7 +40,14 @@ make clean
 make -j4   # assign 4 processors to the task
 make install
 ```
+## Compile netcdf-c
+```
+# In the dtn node get the download the source code and decompress the file 
+wget https://github.com/Unidata/netcdf-c/archive/refs/tags/v4.6.1.tar.gz -O netcdf-c-4.6.1.tar.gz
+tar -xf netcdf-c-4.6.1.tar.gz
 
+
+```
 export DelftDIR=/home/apps/chpc/earth/delft3d
 export DIR=$DelftDIR/LIBRARIES
 
