@@ -73,48 +73,36 @@ export DIR=${DelftDIR}/LIBRARIES
 export NCDIR=${DIR}/netcdf-c-4.6.1
 export NCFDIR=${DIR}/netcdf-fortran-4.5.0
 export HDF5_DIR=${DIR}/hdf5-1.10.6
-
-# Validate directories
-for d in "${DelftDIR}" "${DIR}" "${HDF5_DIR}"; do
-    check_dir "$d" || exit 1
-done
+export MPICH_ROOT=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023
 
 #---------------
 # Compiler Setup
 #---------------
 print_section "Compiler Setup"
 
-export I_MPI_ROOT=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023
-# Intel compilers
-export CC=mpiicc
-export CXX=mpiicpc
-export FC=mpiifort
-export F77=mpiifort
+# Use Intel compilers directly
+export CC=icc
+export CXX=icpc
+export FC=ifort
+export F77=ifort
 
-# Ensure Intel MPI uses Intel compilers
-export I_MPI_CC=icc
-export I_MPI_CXX=icpc
-export I_MPI_F77=ifort
-export I_MPI_F90=ifort
+# MPI wrappers
+export MPICC="$MPICH_ROOT/bin/mpicc"
+export MPICXX="$MPICH_ROOT/bin/mpicxx"
+export MPIFC="$MPICH_ROOT/bin/mpif90"
+export MPIF77="$MPICH_ROOT/bin/mpif77"
 
-# Verify compiler availability
-for compiler in $CC $CXX $FC $F77; do
-    if ! command -v $compiler &> /dev/null; then
-        echo "Error: Compiler $compiler not found!"
-        exit 1
-    fi
-done
+# Force Intel compilers for MPI
+export OMPI_CC=icc
+export OMPI_CXX=icpc
+export OMPI_FC=ifort
+export OMPI_F77=ifort
 
 # Print compiler versions
 echo "Checking compiler versions..."
 $CXX --version || exit 1
 $CC --version || exit 1
 $FC --version || exit 1
-
-# MPICH compiler paths
-export MPICC=${I_MPI_ROOT}/bin/mpicc
-export MPIF90=${I_MPI_ROOT}/bin/mpif90
-export MPIF77=${I_MPI_ROOT}/bin/mpif77
 
 #---------------
 # Compiler and Linker Flags
@@ -131,9 +119,12 @@ export LDFLAGS="-lifcore -lifport -lifcoremt -limf -lsvml -lm -lipgo -lirc -lpth
 #---------------
 # Library Paths
 #---------------
-# Intel compiler libraries for libstdc++ compatibility
+print_section "Library Paths Setup"
+INTEL_LIB="/home/apps/chpc/compmech/compilers/intel/oneapi/compiler/2023.2.0/linux/compiler/lib/intel64_lin"
+
 export LD_LIBRARY_PATH="\
-/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin:\
+$MPICH_ROOT/lib:\
+$INTEL_LIB:\
 ${NCDIR}/lib:\
 ${HDF5_DIR}/lib:\
 ${LD_LIBRARY_PATH}"
@@ -151,6 +142,25 @@ export FCFLAGS="-O2 -fPIC -I${NCDIR}/include -I${HDF5_DIR}/include"
 #export CXXFLAGS="-O2 -fPIC"
 export AM_FFLAGS='-lifcoremt'
 export AM_LDFLAGS='-lifcoremt'
+
+print_section "Compiler Flags Setup"
+
+# Basic flags
+export CFLAGS="-O2 -fPIC"
+export CXXFLAGS="-O2 -fPIC"
+export FFLAGS="-O2 -fPIC -assume noold_unit_star"
+export FCFLAGS="-O2 -fPIC -assume noold_unit_star"
+
+# Linker flags with explicit Intel Fortran libraries
+export LDFLAGS="\
+-L$MPICH_ROOT/lib \
+-L$INTEL_LIB \
+-L${NCDIR}/lib \
+-L${HDF5_DIR}/lib"
+
+# Additional libraries needed for linking
+export LIBS="\
+-lifcore -lifport -lifcoremt -limf -lsvml -lm -lipgo -lirc -lpthread -lirc_s -ldl"
 
 # Set unlimited stack size
 ulimit -s unlimited
@@ -301,6 +311,19 @@ main() {
 
     print_section "Configuring Build"
     cd ${SOURCE_DIR}/src
+
+# Clean Build
+#---------------
+print_section "Cleaning Build Directory"
+rm -f config.cache config.status config.log
+rm -rf autom4te.cache
+find . -name "*.o" -delete
+find . -name "*.a" -delete
+find . -name "*.so" -delete
+find . -name "*.la" -delete
+find . -name "*.lo" -delete
+find . -name ".deps" -exec rm -rf {} +
+find . -name ".libs" -exec rm -rf {} +
 
     # Generate build system files
     echo "Running autogen..."
