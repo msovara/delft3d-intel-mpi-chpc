@@ -222,26 +222,9 @@ set -e  # Exit on error
 # Configuration
 #---------------
 DELFT3D_VERSION="68819"
-INSTALL_PREFIX="/home/apps/chpc/earth/delft3d_mpich_oneapi"
+INSTALL_PREFIX="/home/apps/chpc/earth/delft3d_mpich_oneapi/delft3d"
 SVN_URL="https://svn.oss.deltares.nl/repos/delft3d/tags/delft3dfm/${DELFT3D_VERSION}/"
-SOURCE_DIR="delft3dfm-${DELFT3D_VERSION}"
-
-#---------------
-# Helper Functions
-#---------------
-check_prerequisites() {
-    # Check if SVN is installed
-    if ! command -v svn &> /dev/null; then
-        echo "Error: SVN is not installed"
-        exit 1
-    }
-    
-    # Check if environment is properly set
-    if [ -z "$DelftDIR" ]; then
-        echo "Error: DelftDIR environment variable not set. Did you source delft3d_env.sh?"
-        exit 1
-    }
-}
+SOURCE_DIR="delft3dfm-${DELFT3D_VERSION}"qsubi
 
 #---------------
 # Main Installation
