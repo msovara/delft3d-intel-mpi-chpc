@@ -52,6 +52,7 @@ source /home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh || exit 1
 module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
 module load chpc/BIOMODULES
 module add curl/7.50.0
+module load gcc/9.2.0
 
 #---------------
 # Directory Setup
