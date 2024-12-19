@@ -47,12 +47,23 @@ check_compiler() {
 echo "Setting up modules..."
 module purge
 
-# Load required modules
-source /home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh || exit 1
-module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh
-module load chpc/BIOMODULES
-module add curl/7.50.0
-module load gcc/9.2.0
+# Load Intel OneAPI environment
+INTEL_SETVARS="/home/apps/chpc/compmech/compilers/intel/oneapi/setvars.sh"
+if [ -f "$INTEL_SETVARS" ]; then
+    source "$INTEL_SETVARS" intel64 || {
+        echo "Error: Failed to source Intel environment"
+        exit 1
+    }
+else
+    echo "Error: Intel setvars.sh not found"
+    exit 1
+fi
+
+# Load additional modules
+module load chpc/compmech/mpich/4.2.2/oneapi2023-ssh || exit 1
+module load chpc/BIOMODULES || exit 1
+module add curl/7.50.0 || exit 1
+module load gcc/9.2.0 || exit 1
 
 #---------------
 # Directory Setup
@@ -71,16 +82,51 @@ done
 #---------------
 # Compiler Setup
 #---------------
-export I_MPI_ROOT=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023
-export CC=mpicc
-export CXX=mpicc
-export FC=mpif90
-export F77=mpif77
+print_section "Compiler Setup"
 
-# Validate compilers
-for compiler in mpicc mpif90 mpif77; do
-    check_compiler "$compiler" || exit 1
+export I_MPI_ROOT=/home/apps/chpc/compmech/mpich-4.2.2-oneapi2023
+# Intel compilers
+export CC=mpiicc
+export CXX=mpiicpc
+export FC=mpiifort
+export F77=mpiifort
+
+# Ensure Intel MPI uses Intel compilers
+export I_MPI_CC=icc
+export I_MPI_CXX=icpc
+export I_MPI_F77=ifort
+export I_MPI_F90=ifort
+
+# Verify compiler availability
+for compiler in $CC $CXX $FC $F77; do
+    if ! command -v $compiler &> /dev/null; then
+        echo "Error: Compiler $compiler not found!"
+        exit 1
+    fi
 done
+
+# Print compiler versions
+echo "Checking compiler versions..."
+$CXX --version || exit 1
+$CC --version || exit 1
+$FC --version || exit 1
+
+# MPICH compiler paths
+export MPICC=${I_MPI_ROOT}/bin/mpicc
+export MPIF90=${I_MPI_ROOT}/bin/mpif90
+export MPIF77=${I_MPI_ROOT}/bin/mpif77
+
+#---------------
+# Compiler and Linker Flags
+#---------------
+# Basic optimization flags
+export CFLAGS="-O2 -fPIC"
+export CXXFLAGS="-O2 -fPIC"
+export FFLAGS="-O2 -fPIC"
+export FCFLAGS="-O2 -fPIC"
+
+# Linker flags
+export LDFLAGS="-lifcore -lifport -lifcoremt -limf -lsvml -lm -lipgo -lirc -lpthread -lirc_s -ldl"
 
 #---------------
 # Library Paths
@@ -100,9 +146,9 @@ export LDFLAGS="-L${NCDIR}/lib -L${HDF5_DIR}/lib"
 export NETCDF_CFLAGS="-I${NCDIR}/include"
 export NETCDF_LIBS="-L${NCDIR}/lib -lnetcdf"
 export FCFLAGS="-O2 -fPIC -I${NCDIR}/include -I${HDF5_DIR}/include"
-export FFLAGS=${FCFLAGS}
-export CFLAGS=${FCFLAGS}
-export CXXFLAGS="-O2 -fPIC"
+#export FFLAGS=${FCFLAGS}
+#export CFLAGS=${FCFLAGS}
+#export CXXFLAGS="-O2 -fPIC"
 export AM_FFLAGS='-lifcoremt'
 export AM_LDFLAGS='-lifcoremt'
 
