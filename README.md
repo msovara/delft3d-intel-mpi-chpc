@@ -222,7 +222,7 @@ set -e  # Exit on error
 # Configuration
 #---------------
 DELFT3D_VERSION="68819"
-INSTALL_PREFIX="/home/apps/chpc/earth/delft3d/delft3d"
+INSTALL_PREFIX="/home/apps/chpc/earth/delft3d_mpich_oneapi"
 SVN_URL="https://svn.oss.deltares.nl/repos/delft3d/tags/delft3dfm/${DELFT3D_VERSION}/"
 SOURCE_DIR="delft3dfm-${DELFT3D_VERSION}"
 
